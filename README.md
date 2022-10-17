@@ -313,3 +313,162 @@ This renders the `index.html` file that will be used to interact with the backen
 **Throws**
 
 - `403` if the user is not logged in
+
+#### `POST /api/users/likes` - Like an existing freet
+
+**Body**
+
+- `username` _{string}_ - The liker’s username
+- `id` _{int}_ - The ID number of the freet liked
+
+**Returns**
+
+- A success message
+- An object with the liked freet (updated with a new like)
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the freetId is invalid
+- `409` user has already liked this freet
+
+#### `DELETE /api/users/likes` - Remove like from an existing freet
+
+**Body**
+
+- `username` _{string}_ - The liker’s username
+- `id` _{int}_ - The ID number of the freet to dislike
+
+**Returns**
+
+- A success message
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the freetId is invalid
+- `409` user has not liked this freet
+
+#### `POST /api/users/refreets` - Refreet an existing freet
+
+**Body**
+
+- `username` _{string}_ - The user’s username
+- `id` _{int}_ - The ID number of the freet to refreet
+
+**Returns**
+
+- A success message
+- An object with the refreeted freet (updated with a new refreet)
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the freetId is invalid
+- `409` user has already refreeted this freet
+
+#### `DELETE /api/users/refreets` - Remove refreet
+
+**Body**
+
+- `username` _{string}_ - The user’s username
+- `id` _{int}_ - The ID number of the freet to remove the refreet from
+
+**Returns**
+
+- A success message
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the freetId is invalid
+- `409` user has not refreeted this freet
+
+#### `POST /api/users/following` - Follow another user
+
+**Body**
+
+- `username` _{string}_ - The user’s username
+- `following` _{string}_ - The username of the user to follow
+
+**Returns**
+
+- A success message
+- An object with the new user following
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the user to follow does not exist
+- `409` user is already following the user to follow
+
+#### `DELETE /api/users/following` - Unfollow another user
+
+**Body**
+
+- `username` _{string}_ - The user’s username
+- `unfollowing` _{string}_ - The username of the user to unfollow
+
+**Returns**
+
+- A success message
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the user to unfollow does not exist
+- `409` user is not following the user to unfollow
+
+#### `POST /api/circles` - Create a new circle
+
+**Body**
+
+- `username` _{string}_ - The username of the user creating the circle, now the owner (default to current user for home feed circle)
+- `name` _{string}_ - The name of the circle (default to ‘Home’ for home feed)
+
+**Returns**
+
+- A success message
+- An object with the new circle
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the user to follow does not exist
+- `409` user is already following the user to follow
+
+#### `DELETE /api/circles` - Delete a circle
+
+**Body**
+
+- `username` _{string}_ - The username of the user creating the circle, now the owner (default to current user for home feed circle)
+- `id` _{int}_ - The ID number of the circle to delete
+
+**Returns**
+
+- A success message
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the Circle ID is invalid (does not exist)
+
+#### `PUT /api/circles/:circleId?` - Create a new circle
+
+**Body**
+
+- `username` _{string}_ - The user attempting to modify the circle
+- `id` _{int}_ - The ID number of the Circle to modify
+- `member` _{string}_ The username of the user to add to this Circle. 
+
+**Returns**
+
+- A success message
+- An object with the modified circle
+
+**Throws**
+
+- `403` if the user is not logged in
+- `403` if the user is not the owner of the circle
+- `404` if the Circle ID is invalid (does not exist)
+- `409` member is already a part of the circle
