@@ -10,7 +10,7 @@ import {Schema, model} from 'mongoose';
 export type Circle = {
   _id: Types.ObjectId; // MongoDB assigns each object this ID on creation
   name: string; 
-  owner: string; 
+  owner: { type: Types.ObjectId, ref: 'User' }; 
   members: [{ type: Types.ObjectId, ref: 'User' }];
   freets: [{ type: Types.ObjectId, ref: 'Freet' }];
 };
@@ -24,9 +24,9 @@ const CircleSchema = new Schema({
     type: String,
     required: true
   },
-  // Username of the owner
+  // User ID of the owner
   owner: {
-    type: String,
+    type: { type: Schema.Types.ObjectId, ref: 'User' },
     required: true
   },
   // Members of the circle
@@ -38,7 +38,7 @@ const CircleSchema = new Schema({
   // Freets posted to this circle
   freets: {
     type: [{ type: Schema.Types.ObjectId, ref: 'Freet' }],
-    required: false,
+    required: true,
     ref: 'Freet'
   }
 });

@@ -1,7 +1,7 @@
 import type {HydratedDocument, Types} from 'mongoose';
 import type {Circle} from './model';
 import CircleModel from './model';
-import UserModel from 'user/model';
+import UserModel from '../user/model';
 
 /**
  * This file contains a class with functionality to interact with circle stored
@@ -33,7 +33,7 @@ class CircleCollection {
    * @param {string} circleId - The circleId of the circle to find
    * @return {Promise<HydratedDocument<Circle>> | Promise<null>} - The circle with the given circleId, if any
    */
-  static async findOneByCircleId(circleId: Types.ObjectId): Promise<HydratedDocument<Circle>> {
+  static async findOneByCircleId(circleId: Types.ObjectId | string): Promise<HydratedDocument<Circle>> {
     return CircleModel.findOne({_id: circleId});
   }
 

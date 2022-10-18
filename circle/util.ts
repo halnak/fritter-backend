@@ -1,44 +1,44 @@
 import type {HydratedDocument} from 'mongoose';
 import moment from 'moment';
-import type {User} from './model';
+import type {Circle} from './model';
 
-// Update this if you add a property to the User type!
-type UserResponse = {
+type CircleResponse = {
   _id: string;
-  username: string;
-  dateJoined: string;
+  name: string;
+  owner: string;
+  members: Array<string>;
+  freets: Array<string>;
 };
 
 /**
- * Encode a date as an unambiguous string
- *
- * @param {Date} date - A date object
- * @returns {string} - formatted date as string
- */
-const formatDate = (date: Date): string => moment(date).format('MMMM Do YYYY, h:mm:ss a');
-
-/**
- * Transform a raw User object from the database into an object
+ * Transform a raw Circle object from the database into an object
  * with all the information needed by the frontend
- * (in this case, removing the password for security)
  *
- * @param {HydratedDocument<User>} user - A user object
- * @returns {UserResponse} - The user object without the password
+ * @param {HydratedDocument<Circle>} circle - A circle object
+ * @returns {CircleResponse} - The circle object
  */
-const constructUserResponse = (user: HydratedDocument<User>): UserResponse => {
-  const userCopy: User = {
-    ...user.toObject({
+const constructCircleResponse = (circle: HydratedDocument<Circle>): CircleResponse => {
+  const circleCopy: Circle = {
+    ...circle.toObject({
       versionKey: false // Cosmetics; prevents returning of __v property
     })
   };
-  delete userCopy.password;
+  const m: Array<string> = circleCopy.members.map(function(val){
+    return val.toString();
+  });
+  const f: Array<string> = circleCopy.freets.map(function(val){
+    return val.toString();
+  });
   return {
-    ...userCopy,
-    _id: userCopy._id.toString(),
-    dateJoined: formatDate(user.dateJoined)
+    ...circleCopy,
+    _id: circleCopy._id.toString(),
+    name: circleCopy.name.toString(),
+    owner: circleCopy.owner.toString(),
+    members: m,
+    freets: f
   };
 };
 
 export {
-  constructUserResponse
+  constructCircleResponse
 };

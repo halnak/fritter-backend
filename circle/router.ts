@@ -1,136 +1,78 @@
 import type {Request, Response} from 'express';
 import express from 'express';
 import FreetCollection from '../freet/collection';
-import UserCollection from './collection';
+import UserCollection from '../user/collection';
+import CircleCollection from './collection';
 import * as userValidator from '../user/middleware';
+import * as circleValidator from './middleware';
 import * as util from './util';
 
 const router = express.Router();
 
 /**
- * Sign in user.
+ * Create a circle.
  *
- * @name POST /api/users/session
+ * @name POST /api/circles
  *
- * @param {string} username - The user's username
- * @param {string} password - The user's password
- * @return {UserResponse} - An object with user's details
- * @throws {403} - If user is already signed in
- * @throws {400} - If username or password is  not in the correct format,
- *                 or missing in the req
- * @throws {401} - If the user login credentials are invalid
- *
- */
-router.post(
-  '/session',
-  [
-    userValidator.isUserLoggedOut,
-    userValidator.isValidUsername,
-    userValidator.isValidPassword,
-    userValidator.isAccountExists
-  ],
-  async (req: Request, res: Response) => {
-    const user = await UserCollection.findOneByUsernameAndPassword(
-      req.body.username, req.body.password
-    );
-    req.session.userId = user._id.toString();
-    res.status(201).json({
-      message: 'You have logged in successfully',
-      user: util.constructUserResponse(user)
-    });
-  }
-);
-
-/**
- * Sign out a user
- *
- * @name DELETE /api/users/session
- *
- * @return - None
- * @throws {403} - If user is not logged in
- *
- */
-router.delete(
-  '/session',
-  [
-    userValidator.isUserLoggedIn
-  ],
-  (req: Request, res: Response) => {
-    req.session.userId = undefined;
-    res.status(200).json({
-      message: 'You have been logged out successfully.'
-    });
-  }
-);
-
-/**
- * Create a user account.
- *
- * @name POST /api/users
- *
- * @param {string} username - username of user
- * @param {string} password - user's password
- * @return {UserResponse} - The created user
- * @throws {403} - If there is a user already logged in
- * @throws {409} - If username is already taken
- * @throws {400} - If password or username is not in correct format
+ * @param {string} name - name of circle
+ * @param {string} owner - username of creator
+ * @return {CircleResponse} - The created circle
+ * @throws {403} - If the user is not logged in
  *
  */
 router.post(
   '/',
   [
-    userValidator.isUserLoggedOut,
-    userValidator.isValidUsername,
-    userValidator.isUsernameNotAlreadyInUse,
-    userValidator.isValidPassword
+    userValidator.isUserLoggedIn,
   ],
   async (req: Request, res: Response) => {
-    const user = await UserCollection.addOne(req.body.username, req.body.password);
-    req.session.userId = user._id.toString();
+    const user = await UserCollection.findOneByUsername(req.body.owner);
+    const circle = await CircleCollection.addOne(req.body.name, user.id);
     res.status(201).json({
-      message: `Your account was created successfully. You have been logged in as ${user.username}`,
-      user: util.constructUserResponse(user)
+      message: `Your circle was created successfully.`,
+      user: util.constructCircleResponse(circle)
     });
   }
 );
 
 /**
- * Update a user's profile.
+ * Update the membership of a circle.
  *
- * @name PUT /api/users
+ * @name PUT /api/circles/:circleId?
  *
- * @param {string} username - The user's new username
- * @param {string} password - The user's new password
- * @return {UserResponse} - The updated user
+ * @param {string} username - The user modifying the circle
+ * @param {string} member - The user to add/remove from the circle
+ * @param {boolean} addUser - Whether to add or remove the user from the circle
+ * @return {CircleResponse} - The updated user
  * @throws {403} - If user is not logged in
- * @throws {409} - If username already taken
- * @throws {400} - If username or password are not of the correct format
+ * @throws {403} - If the user is not the owner of the circle
+ * @throws {404} - If the Circle ID is invalid (does not exist)
+ * @throws {409} - If the member is already a part of the circle
  */
 router.put(
   '/',
   [
     userValidator.isUserLoggedIn,
-    userValidator.isValidUsername,
-    userValidator.isUsernameNotAlreadyInUse,
-    userValidator.isValidPassword
   ],
   async (req: Request, res: Response) => {
-    const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
-    const user = await UserCollection.updateOne(userId, req.body);
+    const circle = await CircleCollection.findOneByCircleId(req.query.circleId as string);
+    const member = await UserCollection.findOneByUsername(req.body.member);
+    const updated = await CircleCollection.updateOne(circle.id, req.body.member, req.body.addUser);
     res.status(200).json({
       message: 'Your profile was updated successfully.',
-      user: util.constructUserResponse(user)
+      user: util.constructCircleResponse(updated)
     });
   }
 );
 
 /**
- * Delete a user.
+ * Delete a circle.
  *
- * @name DELETE /api/users
- *
+ * @name DELETE /api/circles
+ * @param {string} 
  * @return {string} - A success message
  * @throws {403} - If the user is not logged in
+ * @throws {404} - If the circle to delete does not exist
  */
 router.delete(
   '/',
@@ -138,14 +80,11 @@ router.delete(
     userValidator.isUserLoggedIn
   ],
   async (req: Request, res: Response) => {
-    const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
-    await UserCollection.deleteOne(userId);
-    await FreetCollection.deleteMany(userId);
-    req.session.userId = undefined;
+    await CircleCollection.deleteOne(req.body.id);
     res.status(200).json({
-      message: 'Your account has been deleted successfully.'
+      message: 'Your circle has been deleted successfully.'
     });
   }
 );
 
-export {router as userRouter};
+export {router as circleRouter};
