@@ -434,8 +434,6 @@ This renders the `index.html` file that will be used to interact with the backen
 **Throws**
 
 - `403` if the user is not logged in
-- `404` if the user to follow does not exist
-- `409` user is already following the user to follow
 
 #### `DELETE /api/circles` - Delete a circle
 
@@ -453,13 +451,12 @@ This renders the `index.html` file that will be used to interact with the backen
 - `403` if the user is not logged in
 - `404` if the Circle ID is invalid (does not exist)
 
-#### `PUT /api/circles/:circleId?` - Create a new circle
+#### `PUT /api/circles/:circleId?` - Update a circle
 
 **Body**
 
 - `username` _{string}_ - The user attempting to modify the circle
-- `id` _{int}_ - The ID number of the Circle to modify
-- `member` _{string}_ The username of the user to add to this Circle. 
+- `member` _{string}_ The username of the user to add/remove from this Circle. 
 
 **Returns**
 
