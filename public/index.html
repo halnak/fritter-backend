@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="/stylesheets/style.css">
   <script src="/scripts/freet.js"></script>
   <script src="/scripts/user.js"></script>
+  <script src="/scripts/circle.js"></script>
   <script src="/scripts/index.js"></script>
 </head>
 
@@ -117,6 +118,60 @@
           </div>
           <input type="submit" value="Delete Freet">
         </form>
+
+        <form id="create-circle">
+          <h3>Create Circle</h3>
+          <div>
+            <label for="owner">Owner ID:</label>
+            <textarea id="owner" name="owner"></textarea>
+          </div>
+          <div>
+            <label for="name">Name:</label>
+            <textarea id="name" name="name"></textarea>
+          </div>
+          <input type="submit" value="Create Circle">
+        </form>
+
+        <!-- <form id="edit-circle">
+          <h3>Add User to Circle</h3>
+          <div>
+            <label for="id">ID:</label>
+            <input id="id" name="id">
+          </div>
+          <div>
+            <label for="userID">Username:</label>
+            <textarea id="userID" name="userID"></textarea>
+          </div>
+          <div>
+            <label for="addUser">Add (true) or Remove (false) User?:</label>
+            <textarea id="addUser" name="addUser"></textarea>
+          </div>
+          <input type="submit" value="Edit Circle">
+        </form> -->
+
+        <form id="delete-circle">
+          <h3>Delete Circle</h3>
+          <div>
+            <label for="id">ID:</label>
+            <input id="id" name="id">
+          </div>
+          <input type="submit" value="Delete Circle">
+        </form>
+
+        <form id="view-all-circles">
+          <h3>View All Circles</h3>
+          <input type="submit" value="View My Circles">
+        </form>
+
+        <form id="view-circles-by-owner">
+          <h3>View Circles By Owner</h3>
+          <div>
+            <label for="owner">Owner:</label>
+            <input id="owner" name="owner">
+          </div>
+          <input type="submit" value="View Circles By Owner">
+        </form>
+
       </div>
     </section>
     <section>
