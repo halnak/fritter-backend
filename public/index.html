@@ -8,6 +8,7 @@
   <script src="/scripts/freet.js"></script>
   <script src="/scripts/user.js"></script>
   <script src="/scripts/circle.js"></script>
+  <script src="/scripts/follow.js"></script>
   <script src="/scripts/index.js"></script>
 </head>
 
@@ -171,6 +172,68 @@
           </div>
           <input type="submit" value="View Circles By Owner">
         </form>
+
+        <form id="view-all-follows">
+          <h3>View All Follows</h3>
+          <input type="submit" value="View All Follows">
+        </form>
+
+      <form id="view-follows-by-user">
+        <h3>View Follows By User</h3>
+        <div>
+          <label for="user">User ID:</label>
+          <input id="user" name="user">
+        </div>
+        <input type="submit" value="View Follows By User">
+      </form>
+
+      <form id="create-follow">
+        <h3>Create Follow</h3>
+        <div>
+          <label for="userId">User ID:</label>
+          <textarea id="userId" name="userId"></textarea>
+        </div>
+        <input type="submit" value="Create Follow">
+      </form>
+
+      <form id="add-follower">
+        <h3>Add Follower</h3>
+        <div>
+          <label for="userId">User ID:</label>
+          <input id="userId" name="userId">
+        </div>
+        <div>
+          <label for="followId">Follow ID:</label>
+          <input id="followId" name="followId">
+        </div>
+        <div>
+          <label for="addFollower">Add follower:</label>
+          <textarea id="addFollower" name="addFollower"></textarea>
+        </div>
+        <input type="submit" value="Add Follower">
+      </form>
+
+      <form id="remove-follower">
+        <h3>Remove Follower</h3>
+        <div>
+          <label for="userId">User ID:</label>
+          <input id="userId" name="userId">
+        </div>
+        <div>
+          <label for="followId">Follow ID:</label>
+          <input id="followId" name="followId">
+        </div>
+        <input type="submit" value="Remove Follower">
+      </form>
+
+      <form id="delete-follow">
+        <h3>Delete Follow</h3>
+        <div>
+          <label for="userId">User ID:</label>
+          <input id="userId" name="userId">
+        </div>
+        <input type="submit" value="Delete Folow">
+      </form>
 
       </div>
     </section>
