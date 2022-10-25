@@ -16,7 +16,7 @@ type GenericFollow<U> = { //generic follow, will only use on users for first imp
 };
 
 export type Follow = GenericFollow<Types.ObjectId>;
-export type PopulatedFollow = GenericFollow<User>; // similar setup to freet
+export type PopulatedFollow = GenericFollow<User>; 
 
 // Mongoose schema definition for interfacing with a MongoDB table
 // Freets stored in this table will have these fields, with the
@@ -24,18 +24,18 @@ export type PopulatedFollow = GenericFollow<User>; // similar setup to freet
 const FollowSchema = new Schema<Follow>({
   // The user
   user: {
-    // Use Types.ObjectId outside of the schema
+    // The user for the follow object
     type: Schema.Types.ObjectId,
     required: true,
     ref: 'User'
   },
-  // The date the freet was created
+  // The users this user is following
   followers: [{
     type: Schema.Types.ObjectId,
     required: true,
     ref: 'User'
   }],
-  // The content of the freet
+  // The users following this user
   following: [{
     type: Schema.Types.ObjectId,
     required: true,

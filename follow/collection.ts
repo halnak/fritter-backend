@@ -1,17 +1,15 @@
-import type {HydratedDocument, ObjectIdSchemaDefinition, Types} from 'mongoose';
+import type {HydratedDocument, Types} from 'mongoose';
 import type {Follow} from './model';
 import FollowModel from './model';
 import UserCollection from '../user/collection';
-import { isUserLoggedIn } from '../user/middleware';
 import UserModel from '../user/model';
-import type {User} from '../user/model';
 
 /**
  * This files contains a class that has the functionality to explore freets
  * stored in MongoDB, including adding, finding, updating, and deleting freets.
  * Feel free to add additional operations in this file.
  *
- * Note: HydratedDocument<Freet> is the output of the FollowModel() constructor,
+ * Note: HydratedDocument<Follow> is the output of the FollowModel() constructor,
  * and contains all the information in Freet. https://mongoosejs.com/docs/typescript.html
  */
 class FollowCollection {
@@ -86,17 +84,11 @@ class FollowCollection {
     const user = await UserModel.findOne({_id: userId});
     const userToFollow = await UserModel.findOne({_id: followId})
 
-    // const userFollow = await FollowModel.findOne({user: user._id}).exec();
-    // const follow = await FollowModel.findOne({user: userToFollow._id}).exec();
-    // if(!this.isFollowing(userId, followId)){ // IFF not already following that user
-    //   userFollow.following.push(userToFollow._id);
-    //   follow.followers.push(user._id);
-      await FollowModel.updateOne({user: user._id}, {$addToSet: {following: userToFollow._id}});
-      await FollowModel.updateOne({user: userToFollow._id}, {$addToSet: {followers: user._id}});
-    // }
+    await FollowModel.updateOne({user: user._id}, {$addToSet: {following: userToFollow._id}});
+    await FollowModel.updateOne({user: userToFollow._id}, {$addToSet: {followers: user._id}});
     
     const follow = await FollowModel.findOne({user: userToFollow._id}).exec();
-    // follow.save();
+    follow.save();
     userToFollow.save();
     return (await follow.populate('followers')).populate('following');
   }
@@ -114,20 +106,10 @@ class FollowCollection {
 
     const userFollow = await FollowModel.findOne({user: user._id}).exec();
     const follow = await FollowModel.findOne({user: userToFollow._id}).exec();
-    // if(this.isFollowing(userId, followId)){ // IFF already following that user
-    //   const indexUser = userFollow.following.indexOf(userToFollow._id, 0);
-    //   if (indexUser > -1) {
-    //      userFollow.following.splice(indexUser, 1);
-    //   }
-      
-    //   const indexFollow = follow.followers.indexOf(user._id, 0);
-    //   if (indexFollow > -1) {
-    //      follow.followers.splice(indexFollow, 1);
-    //   }
-      await FollowModel.updateOne({user: user._id}, {$addToSet: {following: userToFollow._id}});
-      await FollowModel.updateOne({user: userToFollow._id}, {$addToSet: {followers: user._id}});
-    // }
-    
+
+    await FollowModel.updateOne({user: user._id}, {$addToSet: {following: userToFollow._id}});
+    await FollowModel.updateOne({user: userToFollow._id}, {$addToSet: {followers: user._id}});
+
     follow.save();
     userToFollow.save();
     return follow;

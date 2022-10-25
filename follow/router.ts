@@ -2,8 +2,7 @@ import type {NextFunction, Request, Response} from 'express';
 import express from 'express';
 import FreetCollection from '../freet/collection';
 import FollowCollection from './collection';
-import * as userValidator from '../user/middleware';
-import * as freetValidator from '../freet/middleware';
+import * as followValidator from './middleware';
 import * as util from './util';
 
 const router = express.Router();
@@ -29,7 +28,6 @@ const router = express.Router();
 router.get(
   '/',
   async (req: Request, res: Response, next: NextFunction) => {
-    // Check if authorId query parameter was supplied
     if (req.query.user !== undefined) {
       next();
       return;
@@ -40,7 +38,7 @@ router.get(
     res.status(200).json(response);
   },
   [
-    // userValidator.isAuthorExists
+    followValidator.isFollowExists
   ],
   async (req: Request, res: Response) => {
     const userFollow = await FollowCollection.findOne(req.query.user as string);
@@ -61,8 +59,7 @@ router.get(
 router.post(
   '/',
   [
-    userValidator.isUserLoggedIn,
-    // freetValidator.isValidFreetContent
+    followValidator.isFollowExists
   ],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
@@ -86,9 +83,7 @@ router.post(
 router.delete(
   '/:userId?',
   [
-    userValidator.isUserLoggedIn,
-    // freetValidator.isFreetExists,
-    // freetValidator.isValidFreetModifier
+    followValidator.isFollowExists
   ],
   async (req: Request, res: Response) => {
     await FreetCollection.deleteOne(req.params.userId);
@@ -112,10 +107,7 @@ router.delete(
 router.put(
   '/',
   [
-    userValidator.isUserLoggedIn,
-    // freetValidator.isFreetExists,
-    // freetValidator.isValidFreetModifier,
-    // freetValidator.isValidFreetContent
+    followValidator.isFollowExists
   ],
   async (req: Request, res: Response) => {
     var follow;
