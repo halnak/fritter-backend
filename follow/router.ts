@@ -1,5 +1,6 @@
 import type {NextFunction, Request, Response} from 'express';
 import express from 'express';
+import UserCollection from 'user/collection';
 import FreetCollection from '../freet/collection';
 import FollowCollection from './collection';
 import * as followValidator from './middleware';
@@ -52,7 +53,7 @@ router.get(
  *
  * @name POST /api/follows
  *
- * @param {string} userId - The user to create a follow relationship for
+ * @param {string} username - The user to create a follow relationship for
  * @return {FollowResponse} - The created follow
  * @throws {403} - If the user is not logged in
  */
@@ -62,8 +63,9 @@ router.post(
     followValidator.isFollowExists
   ],
   async (req: Request, res: Response) => {
-    const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
-    const follow = await FollowCollection.addOne(userId);
+    const username = (req.session.username as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
+    const user = await UserCollection.findOneByUsername(username);
+    const follow = await FollowCollection.addOne(user._id);
 
     res.status(201).json({
       message: 'Your follow was created successfully.',
