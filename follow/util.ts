@@ -1,7 +1,6 @@
 import type {HydratedDocument} from 'mongoose';
 import type {Follow, PopulatedFollow} from '../follow/model';
 
-// Update this if you add a property to the Freet type!
 type FollowResponse = {
   _id: string;
   user: string;
@@ -10,7 +9,7 @@ type FollowResponse = {
 };
 
 /**
- * Transform a raw Freet object from the database into an object
+ * Transform a raw Follow object from the database into an object
  * with all the information needed by the frontend
  *
  * @param {HydratedDocument<Follow>} follow - A follow object

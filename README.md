@@ -314,30 +314,100 @@ This renders the `index.html` file that will be used to interact with the backen
 
 - `403` if the user is not logged in
 
-#### `POST /api/users/likes` - Like an existing freet
+#### `POST /api/likes` - Create a like for an existing freet
 
 **Body**
 
-- `username` _{string}_ - The liker’s username
-- `id` _{int}_ - The ID number of the freet liked
+- `freetId` _{int}_ - The ID number of the freet
 
 **Returns**
 
 - A success message
-- An object with the liked freet (updated with a new like)
+- An object with the liked object
 
 **Throws**
 
 - `403` if the user is not logged in
 - `404` if the freetId is invalid
+- `409` if the like object for this freet already exists
+
+#### `GET /api/likes` - Get all like objects
+
+**Returns**
+
+- A success message
+- A list of all of the existing like objects
+
+**Throws**
+
+- `403` if the user is not logged in
+
+#### `GET /api/likes/:userId?` - Get all like objects for a particular user
+
+**Returns**
+
+- A success message
+- A list of all of the like objects for the given user
+
+**Throws**
+
+- `403` if the user is not logged in
+
+#### `GET /api/likes/:freetId?` - Get the like object for a given freet
+
+**Returns**
+
+- A success message
+- The like object for the freet
+
+**Throws**
+
+- `403` if the user is not logged in
+
+#### `PUT /api/likes/add` - Add a user to like a freet
+
+**Body**
+
+- `userId` _{int}_ - The id of the user liking the freet
+- `freetId` _{int}_ - The freet id of the like object
+
+**Returns**
+
+- A success message
+- The new like object modified with the user as having liked it
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the freetId is invalid
+- `404` if the like object for this freetId is invalid
 - `409` user has already liked this freet
 
-#### `DELETE /api/users/likes` - Remove like from an existing freet
+#### `PUT /api/likes/remove` - Remove a user from liking a freet
 
 **Body**
 
-- `username` _{string}_ - The liker’s username
-- `id` _{int}_ - The ID number of the freet to dislike
+- `userId` _{int}_ - The id of the user unliking the freet
+- `freetId` _{int}_ - The freet id of the like object
+
+**Returns**
+
+- A success message
+- The new like object modified with the user as having unliked it
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the freetId is invalid
+- `404` if the like object for this freetId is invalid
+- `409` user has not liked this tweet
+
+
+#### `DELETE /api/likes` - Remove freet's like object
+
+**Body**
+
+- `freetid` _{int}_ - The ID number of the freet to remove
 
 **Returns**
 
@@ -347,9 +417,9 @@ This renders the `index.html` file that will be used to interact with the backen
 
 - `403` if the user is not logged in
 - `404` if the freetId is invalid
-- `409` user has not liked this freet
+- `404` if the like object for this freetId is invalid
 
-#### `POST /api/users/refreets` - Refreet an existing freet
+#### `POST /api/refreets` - Refreet an existing freet
 
 **Body**
 

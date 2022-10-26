@@ -36,7 +36,7 @@ function removeFollower(fields) {
 }
 
 function deleteFollow(fields) {
-  fetch(`/api/freets/${fields.userId}`, {method: 'DELETE'})
+  fetch(`/api/follows/userId=${fields.userId}`, {method: 'DELETE'})
     .then(showResponse)
     .catch(showResponse);
 }

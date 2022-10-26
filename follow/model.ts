@@ -3,12 +3,12 @@ import {Schema, model} from 'mongoose';
 import type {User} from '../user/model';
 
 /**
- * This file defines the properties stored in a Freet
+ * This file defines the properties stored in a Follow
  * DO NOT implement operations here ---> use collection file
  */
 
-// Type definition for Freet on the backend
-type GenericFollow<U> = { //generic follow, will only use on users for first implementation
+// Type definition for Follow on the backend
+type GenericFollow<U> = {
   _id: Types.ObjectId; // MongoDB assigns each object this ID on creation
   user: U;
   followers: Array<U>;

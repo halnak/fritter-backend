@@ -50,6 +50,13 @@ const formsAndHandlers = {
   'add-follower': addFollower,
   'remove-follower': removeFollower,
   'delete-follow': deleteFollow,
+  'view-all-likes': viewAllLikes,
+  'view-likes-by-user': viewLikesByUser,
+  'view-likes-by-freet': viewLikesByFreet,
+  'create-like': createLike,
+  'add-like': addLike,
+  'remove-like': removeLike,
+  'delete-like': deleteLike,
 };
 
 // Attach handlers to forms
