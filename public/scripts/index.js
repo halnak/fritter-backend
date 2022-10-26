@@ -57,6 +57,13 @@ const formsAndHandlers = {
   'add-like': addLike,
   'remove-like': removeLike,
   'delete-like': deleteLike,
+  'view-all-refreets': viewAllRefreets,
+  'view-refreets-by-user': viewRefreetsByUser,
+  'view-refreets-by-freet': viewRefreetsByFreet,
+  'create-refreet': createRefreet,
+  'add-refreet': addRefreet,
+  'remove-refreet': removeRefreet,
+  'delete-refreet': deleteRefreet,
 };
 
 // Attach handlers to forms

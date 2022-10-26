@@ -400,7 +400,7 @@ This renders the `index.html` file that will be used to interact with the backen
 - `403` if the user is not logged in
 - `404` if the freetId is invalid
 - `404` if the like object for this freetId is invalid
-- `409` user has not liked this tweet
+- `409` user has not liked this freet
 
 
 #### `DELETE /api/likes` - Remove freet's like object
@@ -419,30 +419,100 @@ This renders the `index.html` file that will be used to interact with the backen
 - `404` if the freetId is invalid
 - `404` if the like object for this freetId is invalid
 
-#### `POST /api/refreets` - Refreet an existing freet
+#### `POST /api/refreets` - Create a refreet for an existing freet
 
 **Body**
 
-- `username` _{string}_ - The user’s username
-- `id` _{int}_ - The ID number of the freet to refreet
+- `freetId` _{int}_ - The ID number of the freet
 
 **Returns**
 
 - A success message
-- An object with the refreeted freet (updated with a new refreet)
+- An object with the refreeted object
 
 **Throws**
 
 - `403` if the user is not logged in
 - `404` if the freetId is invalid
+- `409` if the refreet object for this freet already exists
+
+#### `GET /api/refreets` - Get all refreet objects
+
+**Returns**
+
+- A success message
+- A list of all of the existing refreet objects
+
+**Throws**
+
+- `403` if the user is not logged in
+
+#### `GET /api/refreets/:userId?` - Get all refreet objects for a particular user
+
+**Returns**
+
+- A success message
+- A list of all of the refreet objects for the given user
+
+**Throws**
+
+- `403` if the user is not logged in
+
+#### `GET /api/refreets/:freetId?` - Get the refreet object for a given freet
+
+**Returns**
+
+- A success message
+- The refreet object for the freet
+
+**Throws**
+
+- `403` if the user is not logged in
+
+#### `PUT /api/refreets/add` - Add a user to refreet a freet
+
+**Body**
+
+- `userId` _{int}_ - The id of the user refreeting the freet
+- `freetId` _{int}_ - The freet id of the refreet object
+
+**Returns**
+
+- A success message
+- The new like object modified with the user as having refreeted it
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the freetId is invalid
+- `404` if the refreeted object for this freetId is invalid
 - `409` user has already refreeted this freet
 
-#### `DELETE /api/users/refreets` - Remove refreet
+#### `PUT /api/refreets/remove` - Remove a user from refreeting a freet
 
 **Body**
 
-- `username` _{string}_ - The user’s username
-- `id` _{int}_ - The ID number of the freet to remove the refreet from
+- `userId` _{int}_ - The id of the user unrefreeting the freet
+- `freetId` _{int}_ - The freet id of the refreet object
+
+**Returns**
+
+- A success message
+- The new like object modified with the user as having unrefreeted it
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the freetId is invalid
+- `404` if the refreet object for this freetId is invalid
+- `409` user has not refreeted this freet
+
+
+#### `DELETE /api/refreets` - Remove freet's refreet object
+
+**Body**
+
+- `freetid` _{int}_ - The ID number of the freet to remove
 
 **Returns**
 
@@ -452,7 +522,7 @@ This renders the `index.html` file that will be used to interact with the backen
 
 - `403` if the user is not logged in
 - `404` if the freetId is invalid
-- `409` user has not refreeted this freet
+- `404` if the refreet object for this freetId is invalid
 
 #### `POST /api/users/following` - Follow another user
 
