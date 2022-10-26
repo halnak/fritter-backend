@@ -135,22 +135,57 @@
           <input type="submit" value="Create Circle">
         </form>
 
-        <!-- <form id="edit-circle">
-          <h3>Add User to Circle</h3>
+        <form id="add-member-circle">
+          <h3>Add a Member to a Circle</h3>
           <div>
             <label for="id">ID:</label>
             <input id="id" name="id">
           </div>
           <div>
-            <label for="userID">Username:</label>
-            <textarea id="userID" name="userID"></textarea>
+            <label for="member">Username:</label>
+            <textarea id="member" name="member"></textarea>
+          </div>
+          <input type="submit" value="Add Member to Circle">
+        </form>
+
+        <form id="remove-member-circle">
+          <h3>Remove a Member From a Circle</h3>
+          <div>
+            <label for="id">ID:</label>
+            <input id="id" name="id">
           </div>
           <div>
-            <label for="addUser">Add (true) or Remove (false) User?:</label>
-            <textarea id="addUser" name="addUser"></textarea>
+            <label for="member">Username:</label>
+            <textarea id="member" name="member"></textarea>
           </div>
-          <input type="submit" value="Edit Circle">
-        </form> -->
+          <input type="submit" value="Remove Member From Circle">
+        </form>
+
+        <form id="add-freet-circle">
+          <h3>Add a Freet to a Circle</h3>
+          <div>
+            <label for="id">ID:</label>
+            <input id="id" name="id">
+          </div>
+          <div>
+            <label for="freetId">Freet ID:</label>
+            <textarea id="freetId" name="freetId"></textarea>
+          </div>
+          <input type="submit" value="Add Freet to Circle">
+        </form>
+
+        <form id="remove-freet-circle">
+          <h3>Remove a Freet From a Circle</h3>
+          <div>
+            <label for="id">ID:</label>
+            <input id="id" name="id">
+          </div>
+          <div>
+            <label for="freetId">Freet ID:</label>
+            <textarea id="freetId" name="freetId"></textarea>
+          </div>
+          <input type="submit" value="Remove Freet From Circle">
+        </form>
 
         <form id="delete-circle">
           <h3>Delete Circle</h3>
@@ -171,6 +206,15 @@
           <div>
             <label for="owner">Owner:</label>
             <input id="owner" name="owner">
+          </div>
+          <input type="submit" value="View Circles By Owner">
+        </form>
+
+        <form id="view-circles-by-member">
+          <h3>View Circles By Member</h3>
+          <div>
+            <label for="member">Member:</label>
+            <input id="member" name="member">
           </div>
           <input type="submit" value="View Circles By Owner">
         </form>

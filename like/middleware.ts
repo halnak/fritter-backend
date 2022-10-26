@@ -7,10 +7,10 @@ import LikeCollection from './collection';
  */
 const userLikedFreet = async (req: Request, res: Response, next: NextFunction) => {
   const hasLiked = await LikeCollection.hasLiked(req.body.userId, req.body.freetId);
-  if (hasLiked) {
+  if (!hasLiked) {
     res.status(409).json({
       error: {
-        freetNotFound: `User with ID ${req.body.userId} already liked freet with ID ${req.body.freetId}.`
+        freetNotFound: `User with ID ${req.body.userId} has not liked freet with ID ${req.body.freetId}.`
       }
     });
     return;
@@ -24,10 +24,10 @@ const userLikedFreet = async (req: Request, res: Response, next: NextFunction) =
  */
  const userUnlikedFreet = async (req: Request, res: Response, next: NextFunction) => {
   const hasLiked = await LikeCollection.hasLiked(req.body.userId, req.body.freetId);
-  if (!hasLiked) {
+  if (hasLiked) {
     res.status(409).json({
       error: {
-        freetNotFound: `User with ID ${req.body.userId} has not liked freet with ID ${req.body.freetId}.`
+        freetNotFound: `User with ID ${req.body.userId} has already liked the freet with ID ${req.body.freetId}.`
       }
     });
     return;

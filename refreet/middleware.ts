@@ -7,10 +7,10 @@ import RefreetCollection from './collection';
  */
 const userRefreetedFreet = async (req: Request, res: Response, next: NextFunction) => {
   const hasRefreeted = await RefreetCollection.hasRefreeted(req.body.userId, req.body.freetId);
-  if (hasRefreeted) {
+  if (!hasRefreeted) {
     res.status(409).json({
       error: {
-        freetNotFound: `User with ID ${req.body.userId} already Refreeted freet with ID ${req.body.freetId}.`
+        freetNotFound: `User with ID ${req.body.userId} has not refreeted the freet with ID ${req.body.freetId}.`
       }
     });
     return;
@@ -24,10 +24,10 @@ const userRefreetedFreet = async (req: Request, res: Response, next: NextFunctio
  */
  const userUnRefreetedFreet = async (req: Request, res: Response, next: NextFunction) => {
   const hasRefreeted = await RefreetCollection.hasRefreeted(req.body.userId, req.body.freetId);
-  if (!hasRefreeted) {
+  if (hasRefreeted) {
     res.status(409).json({
       error: {
-        freetNotFound: `User with ID ${req.body.userId} has not Refreeted freet with ID ${req.body.freetId}.`
+        freetNotFound: `User with ID ${req.body.userId} has already refreeted freet with ID ${req.body.freetId}.`
       }
     });
     return;

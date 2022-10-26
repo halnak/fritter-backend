@@ -2,7 +2,9 @@ import type {HydratedDocument, Types} from 'mongoose';
 import type {Circle} from './model';
 import CircleModel from './model';
 import UserModel from '../user/model';
+import FreetModel from '../freet/model';
 import UserCollection from '../user/collection';
+import FreetCollection from '../freet/collection';
 
 /**
  * This file contains a class with functionality to interact with circle stored
@@ -20,10 +22,16 @@ class CircleCollection {
    * @param {{ type: Types.ObjectId, ref: 'User' }} owner - The username of the owner
    * @return {Promise<HydratedDocument<Circle>>} - The newly created user
    */
-  static async addOne(name: string, owner: {type: Types.ObjectId, ref: 'User'}): Promise<HydratedDocument<Circle>> {
-    const members = [owner]; // owner is first member of circle
-    const freets: Array<{ type: Types.ObjectId, ref: 'Freet' }> = [];
-    const circle = new CircleModel({name, owner, members, freets});
+  static async addOne(name: string, ownerId: Types.ObjectId | string): Promise<HydratedDocument<Circle>> {
+    const owner = await UserCollection.findOneByUserId(ownerId);
+    const members = [owner._id]; // owner is first member of circle
+    // const freets: Array<{ type: Types.ObjectId, ref: 'Freet' }> = [];
+    const circle = new CircleModel({
+      name: name, 
+      owner: owner._id, 
+      members: members, 
+      freets: []
+    });
     await circle.save(); // Saves user to MongoDB
     return circle;
   }
@@ -35,7 +43,10 @@ class CircleCollection {
    * @return {Promise<HydratedDocument<Circle>> | Promise<null>} - The circle with the given circleId, if any
    */
   static async findOneByCircleId(circleId: Types.ObjectId | string): Promise<HydratedDocument<Circle>> {
-    return CircleModel.findOne({_id: circleId});
+    return CircleModel.findOne({_id: circleId})
+      .populate('owner')
+      .populate('members')
+      .populate('freets');
   }
 
     /**
@@ -45,40 +56,137 @@ class CircleCollection {
    */
   static async findAll(): Promise<Array<HydratedDocument<Circle>>> {
     // Retrieves circles and sorts them alphabetically by name
-    return CircleModel.find({}).sort({name: 1}).populate('owner');
+    return CircleModel.find({}).sort({name: 1})
+      .populate('owner')
+      .populate('members')
+      .populate('freets');
   }
 
   /**
-   * Get all the freets in by given author
+   * Get all the circles by given owner
    *
-   * @param {string} username - The username of author of the freets
-   * @return {Promise<HydratedDocument<Freet>[]>} - An array of all of the freets
+   * @param {string} username - The username of the owner of the circles
+   * @return {Promise<HydratedDocument<Circles>[]>} - An array of all of the circles
    */
   static async findAllByOwner(username: string): Promise<Array<HydratedDocument<Circle>>> {
     const owner = await UserCollection.findOneByUsername(username);
-    return CircleModel.find({owner: owner._id}).populate('ownerId');
+    return CircleModel.find({owner: owner._id})
+      .populate('owner')
+      .populate('members')
+      .populate('freets');
   }
 
-  // /**
-  //  * Update members of a circle. 
-  //  *
-  //  * @param {string} circleId - The circleId of the circle to update
-  //  * @param {string} userId - The userId of the user to add or remove from circle members
-  //  * @param {boolean} addUser - Whether to add (true) or remove (false) the user from the circle members
-  //  * @return {Promise<HydratedDocument<Circle>>} - The updated circle
-  //  */
-  // static async updateOne(circleId: Types.ObjectId, userId: Types.ObjectId | string, addUser: boolean): Promise<HydratedDocument<Circle>> {
-  //   const circle = await CircleModel.findOne({_id: circleId});
-  //   const user = await UserModel.findOne({_id: userId});
-  //   const index = circle.members.indexOf(user.id, 0);
-  //   if (addUser && (index > -1)){
-  //     circle.members.push(user.id)
-  //   }else if (!addUser && (index === -1)){
-  //     circle.members.splice(index, 1);
-  //   }
-  //   await circle.save();
-  //   return circle;
-  // }
+  /**
+   * Get all the circles by given member
+   *
+   * @param {string} username - The username of the member in the circles
+   * @return {Promise<HydratedDocument<Circles>[]>} - An array of all of the circles
+   */
+     static async findAllByMember(username: string): Promise<Array<HydratedDocument<Circle>>> {
+      const member = await UserCollection.findOneByUsername(username);
+      return CircleModel.find({members: {$in: [member._id]}})
+        .populate('owner')
+        .populate('members')
+        .populate('freets');
+    }
+
+  /**
+   * Check if a user is already a member of a given circle
+   *
+   * @param {string} circleId - The id of the circle being checked
+   * @param {string} userId - The id of the user to check membership of
+   * @return {boolean} - Whether the user is already a member of the circle
+   */
+   static async isMember(circleId: Types.ObjectId, userId: Types.ObjectId | string): Promise<boolean> {
+    const user = await UserModel.findOne({_id: userId});
+    const circle = await this.findOneByCircleId(circleId);
+
+    const members_arr: Array<Types.ObjectId> = circle.members;
+    return members_arr.includes(user._id);
+  }
+
+  /**
+   * Check if a freet is already a member of a given circle's freets
+   *
+   * @param {string} circleId - The id of the circle being checked
+   * @param {string} freetId - The id of the freet to check membership of
+   * @return {boolean} - Whether the user is already a member of the circle
+   */
+   static async isMemberFreet(circleId: Types.ObjectId, freetId: Types.ObjectId): Promise<boolean> {
+    const freet = await FreetModel.findOne({_id: freetId});
+    const circle = await this.findOneByCircleId(circleId);
+
+    const freets_arr: Array<Types.ObjectId> = circle.freets;
+    return freets_arr.includes(freet._id);
+  }
+
+  /**
+   * Update members of a circle. 
+   *
+   * @param {string} circleId - The circleId of the circle to update
+   * @param {string} userId - The userId of the user to add to circle members
+   * @return {Promise<HydratedDocument<Circle>>} - The updated circle
+   */
+  static async addMember(circleId: Types.ObjectId, userId: Types.ObjectId | string): Promise<HydratedDocument<Circle>> {
+    const circle = await CircleModel.findOne({_id: circleId});
+    const user = await UserModel.findOne({_id: userId});
+    if (!this.isMember(circleId, userId)){
+      await CircleModel.updateOne({_id: circleId}, {$addToSet: {members: user._id}});
+    }
+    await circle.save();
+    return circle;
+  }
+
+  /**
+   * Update members of a circle. 
+   *
+   * @param {string} circleId - The circleId of the circle to update
+   * @param {string} userId - The userId of the user to remove from circle members
+   * @return {Promise<HydratedDocument<Circle>>} - The updated circle
+   */
+   static async removeMember(circleId: Types.ObjectId, userId: Types.ObjectId | string): Promise<HydratedDocument<Circle>> {
+    const circle = await CircleModel.findOne({_id: circleId});
+    const user = await UserModel.findOne({_id: userId});
+    if (this.isMember(circleId, userId)){
+      await CircleModel.updateOne({_id: circleId}, {$pull: {members: user._id}});
+    }
+    await circle.save();
+    return circle;
+  }
+
+  /**
+   * Update freets of a circle. 
+   *
+   * @param {string} circleId - The circleId of the circle to update
+   * @param {string} freetId - The freetId of the freet to add to circle freets
+   * @return {Promise<HydratedDocument<Circle>>} - The updated circle
+   */
+   static async addFreet(circleId: Types.ObjectId, freetId: Types.ObjectId): Promise<HydratedDocument<Circle>> {
+    const circle = await CircleModel.findOne({_id: circleId});
+    const freet = await FreetModel.findOne({_id: freetId});
+    if (!this.isMemberFreet(circleId, freetId)){
+      await CircleModel.updateOne({_id: circleId}, {$addToSet: {freets: freet._id}});
+    }
+    await circle.save();
+    return circle;
+  }
+
+  /**
+   * Update freets of a circle. 
+   *
+   * @param {string} circleId - The circleId of the circle to update
+   * @param {string} freetId - The freetId of the freet to remove from circle freets
+   * @return {Promise<HydratedDocument<Circle>>} - The updated circle
+   */
+   static async removeFreet(circleId: Types.ObjectId, freetId: Types.ObjectId): Promise<HydratedDocument<Circle>> {
+    const circle = await CircleModel.findOne({_id: circleId});
+    const freet = await FreetModel.findOne({_id: freetId});
+    if (this.isMemberFreet(circleId, freetId)){
+      await CircleModel.updateOne({_id: circleId}, {$pull: {freets: freet._id}});
+    }
+    await circle.save();
+    return circle;
+  }
 
   /**
    * Delete a circle from the collection.

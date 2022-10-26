@@ -6,8 +6,8 @@ type CircleResponse = {
   _id: string;
   name: string;
   owner: string;
-  // members: Array<string>;
-  // freets: Array<string>;
+  members: Array<string>;
+  freets: Array<string>;
 };
 
 /**
@@ -23,19 +23,19 @@ const constructCircleResponse = (circle: HydratedDocument<Circle>): CircleRespon
       versionKey: false // Cosmetics; prevents returning of __v property
     })
   };
-  // const m: Array<string> = circleCopy.members.map(function(val){
-  //   return val.toString();
-  // });
-  // const f: Array<string> = circleCopy.freets.map(function(val){
-  //   return val.toString();
-  // });
+  const m: Array<string> = circleCopy.members.map(function(val){
+    return val.toString();
+  });
+  const f: Array<string> = circleCopy.freets.map(function(val){
+    return val.toString();
+  });
   return {
     ...circleCopy,
     _id: circleCopy._id.toString(),
     name: circleCopy.name.toString(),
     owner: circleCopy.owner._id.toString(),
-    // members: m,
-    // freets: f
+    members: m,
+    freets: f
   };
 };
 

@@ -39,7 +39,7 @@ class LikeCollection {
   static async findOne(freetId: Types.ObjectId): Promise<HydratedDocument<Like>> {
     // const freet = await FreetCollection.findOne(freetId);
     return LikeModel.findOne({freet: freetId})
-                      .populate('users');
+      .populate('users');
   }
 
   /**
@@ -64,7 +64,7 @@ class LikeCollection {
       user = await UserCollection.findOneByUsername(userId as string);
     }
     
-    return LikeModel.find({user: user._id})
+    return LikeModel.find({users: {$in: [user._id]}})
       .populate('users');
 }
 

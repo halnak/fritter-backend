@@ -524,12 +524,11 @@ This renders the `index.html` file that will be used to interact with the backen
 - `404` if the freetId is invalid
 - `404` if the refreet object for this freetId is invalid
 
-#### `POST /api/users/following` - Follow another user
+#### `POST /api/following` - Follow another user
 
 **Body**
 
-- `username` _{string}_ - The user’s username
-- `following` _{string}_ - The username of the user to follow
+- `userId` _{string}_ - The user’s username
 
 **Returns**
 
@@ -539,15 +538,31 @@ This renders the `index.html` file that will be used to interact with the backen
 **Throws**
 
 - `403` if the user is not logged in
-- `404` if the user to follow does not exist
-- `409` user is already following the user to follow
 
-#### `DELETE /api/users/following` - Unfollow another user
+#### `PUT /api/following` - Follow or unfollow another user
+
+**Body**
+
+- `userId` _{string}_ - The user’s username
+- `followId` _{string}_ - The username of the user to follow
+= `addUser` _{boolean}_ - Whether to follow (true) or unfollow (false)
+
+**Returns**
+
+- A success message
+- An object with the new user following
+
+**Throws**
+
+- `403` if the user is not logged in
+- `404` if the user to follow/unfollow does not exist
+- `409` user is already following/not following the user to follow/unfollow
+
+#### `DELETE /api/following` - Unfollow another user
 
 **Body**
 
 - `username` _{string}_ - The user’s username
-- `unfollowing` _{string}_ - The username of the user to unfollow
 
 **Returns**
 
@@ -556,8 +571,6 @@ This renders the `index.html` file that will be used to interact with the backen
 **Throws**
 
 - `403` if the user is not logged in
-- `404` if the user to unfollow does not exist
-- `409` user is not following the user to unfollow
 
 #### `POST /api/circles` - Create a new circle
 
@@ -579,7 +592,6 @@ This renders the `index.html` file that will be used to interact with the backen
 
 **Body**
 
-- `username` _{string}_ - The username of the user creating the circle, now the owner (default to current user for home feed circle)
 - `id` _{int}_ - The ID number of the circle to delete
 
 **Returns**
@@ -591,12 +603,12 @@ This renders the `index.html` file that will be used to interact with the backen
 - `403` if the user is not logged in
 - `404` if the Circle ID is invalid (does not exist)
 
-#### `PUT /api/circles/:circleId?` - Update a circle
+#### `PUT /api/circles/addMember` - Update a circle
 
 **Body**
 
-- `username` _{string}_ - The user attempting to modify the circle
-- `member` _{string}_ The username of the user to add/remove from this Circle. 
+- `id` _{string}_ - The circle to modify
+- `member` _{string}_ The username of the user to add from this Circle. 
 
 **Returns**
 
@@ -609,3 +621,93 @@ This renders the `index.html` file that will be used to interact with the backen
 - `403` if the user is not the owner of the circle
 - `404` if the Circle ID is invalid (does not exist)
 - `409` member is already a part of the circle
+
+#### `PUT /api/circles/removeMember` - Update a circle
+
+**Body**
+
+- `id` _{string}_ - The circle to modify
+- `member` _{string}_ The username of the user to remove from this Circle. 
+
+**Returns**
+
+- A success message
+- An object with the modified circle
+
+**Throws**
+
+- `403` if the user is not logged in
+- `403` if the user is not the owner of the circle
+- `404` if the Circle ID is invalid (does not exist)
+- `409` member is already not a part of the circle
+
+#### `PUT /api/circles/addFreet` - Update a circle
+
+**Body**
+
+- `id` _{string}_ - The circle to modify
+- `freetId` _{string}_ The freet to add 
+
+**Returns**
+
+- A success message
+- An object with the modified circle
+
+**Throws**
+
+- `403` if the user is not logged in
+- `403` if the user is not the owner of the circle
+- `404` if the Circle ID is invalid (does not exist)
+- `404` if the freet ID is invalid (does not exist)
+
+#### `PUT /api/circles/removeFreet` - Update a circle
+
+**Body**
+
+- `id` _{string}_ - The circle to modify
+- `freetId` _{string}_ The freet to remove
+
+**Returns**
+
+- A success message
+- An object with the modified circle
+
+**Throws**
+
+- `403` if the user is not logged in
+- `403` if the user is not the owner of the circle
+- `404` if the Circle ID is invalid (does not exist)
+- `404` if the freet ID is invalid (does not exist)
+
+#### `GET /api/circles` - Get all circles
+
+**Returns**
+
+- A success message
+- All circle objects
+
+**Throws**
+
+- `403` if the user is not logged in
+
+#### `GET /api/circles/:owner?` - Get all circles with a given owner
+
+**Returns**
+
+- A success message
+- All circle objects with the given owner
+
+**Throws**
+
+- `403` if the user is not logged in
+
+#### `GET /api/circles/:member?` - Get all circles with a given member
+
+**Returns**
+
+- A success message
+- All circle objects with the given member
+
+**Throws**
+
+- `403` if the user is not logged in
